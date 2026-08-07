@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amit Dashboard</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+  </head>
+
+  <body class="dark">
+    <div id="loader">Loading Live Data...</div>
+
+    <div class="dashboard">
+      <aside class="sidebar">
+        <!-- LEFT SIDEBAR LOGO WITH STYLISH 'AS' BADGE -->
+        <div class="logo">
+          <div class="logo-circle logo-as-badge">AS</div>
+          <div>
+            <h2>Amit</h2>
+            <p>Business Intelligence</p>
+          </div>
+        </div>
+
+        <div class="quick-stats">
+          <h4>Quick Stats</h4>
+
+          <div class="stat-row">
+            <span>📈 Growth</span>
+            <span class="green" id="sidebarGrowth">+18.4%</span>
+          </div>
+
+          <div class="stat-row">
+            <span>💰 Avg Order</span>
+            <span id="sidebarAvg">₹0</span>
+          </div>
+
+          <div class="stat-row">
+            <span>🛒 Orders</span>
+            <span id="sidebarOrders">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span>👥 Customers</span>
+            <span id="sidebarCustomers">0</span>
+          </div>
+        </div>
+
+        <ul class="sidebar-menu" aria-label="Dashboard navigation">
+          <li id="dashboardBtn" class="active" tabindex="0" role="button">
+            <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+            <span>Dashboard</span>
+          </li>
+          <li id="analyticsBtn" tabindex="0" role="button">
+            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+            <span>Analytics</span>
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main">
+        <header>
+          <div class="header-left">
+            <h1 id="greeting">Good Evening 👋</h1>
+            <p id="todayDate">Sunday • 2 August 2026</p>
+          </div>
+
+          <div class="header-right">
+            <div class="header-icons">
+              <button id="notificationBtn" class="icon-btn" type="button" aria-label="Show notifications" aria-expanded="false">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notification-dot"></span>
+              </button>
+
+              <div class="notification-dropdown" id="notificationDropdown">
+                <h3>Notifications</h3>
+                <div class="notification-item">✅ Supabase Live Sync Active</div>
+                <div class="notification-item">💰 Live Revenue tracking online</div>
+                <div class="notification-item">👤 Real-time customer stats connected</div>
+              </div>
+
+              <button id="themeToggle" type="button" aria-label="Toggle theme">
+                <i class="fa-solid fa-moon"></i>
+              </button>
+
+              <div class="last-updated-time">
+                <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                <span id="liveDigitalWatch">00:00:00 AM</span>
+              </div>
+
+              <!-- RIGHT SIDE N BADGE PERMANENTLY REMOVED -->
+            </div>
+          </div>
+        </header>
+
+        <div id="dashboardPage">
+          <div class="top-actions">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input type="text" id="searchInput" placeholder="Search Order ID, Customer, Destination, Country, Product, Date..." />
+            </div>
+
+            <div class="report-filter">
+              <input type="date" id="reportDate" aria-label="Report date" />
+              <button id="applyDate" class="action-btn" type="button">Apply</button>
+            </div>
+
+            <!-- SINGLE EXPORT CSV BUTTON IN TOP ACTION BAR -->
+            <button id="topExportCSV" class="action-btn" type="button">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+
+            <button id="refreshBtn" class="action-btn" type="button">
+              <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+              Refresh
+            </button>
+          </div>
+
+          <div class="dashboard-status">
+            <span id="lastUpdated" aria-live="polite">Updated: Live Sync</span>
+          </div>
+
+          <!-- TOP 5 KPI CARDS -->
+          <section class="cards">
+            <!-- CARD 1: Total Revenue -->
+            <div class="card revenue-card">
+              <div class="card-header">
+                <div>
+                  <p>Total Revenue</p>
+                  <h2 id="revenue">₹0</h2>
+                </div>
+
+                <div class="icon revenue">
+                  <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+              </div>
+
+              <div class="trend">
+                <span class="positive" id="revenueGrowthBadge">
+                  <i class="fa-solid fa-arrow-trend-up"></i>
+                  <span id="revenueGrowth">+18.4%</span>
+                </span>
+                <span class="subtext">Revenue Growth</span>
+              </div>
+
+              <div class="sparkline" id="revenueSparkline">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <!-- CARD 2: Sales vs Prev Month Gap -->
+            <div class="card order-card month-gap-card">
+              <div class="card-header">
+                <div>
+                  <p id="monthGapTitle">Monthly Sales</p>
+                  <h2 id="thisMonthRevenue">₹0</h2>
+                </div>
+
+                <div class="icon orders">
+                  <i class="fa-solid fa-chart-line"></i>
+                </div>
+              </div>
+
+              <div class="trend" id="monthGapTrend">
+                <span class="positive" id="monthGapBadge">
+                  <i class="fa-solid fa-arrow-trend-up"></i>
+                  <span id="monthGapPct">0%</span>
+                </span>
+                <span class="subtext" id="prevMonthRevLabel">vs Prev Month</span>
+              </div>
+            </div>
+
+            <!-- CARD 3: Today's Performance -->
+            <div class="card today-performance-card">
+              <div class="card-header">
+                <div>
+                  <p>Today's Performance</p>
+                  <span class="live-pill"><i class="fa-solid fa-bolt"></i> Live</span>
+                </div>
+                <div class="icon today-icon">
+                  <i class="fa-solid fa-calendar-day"></i>
+                </div>
+              </div>
+
+              <div class="today-grid">
+                <div class="today-item">
+                  <small>Today's Orders</small>
+                  <h3 id="todayOrders">0</h3>
+                </div>
+                <div class="today-divider"></div>
+                <div class="today-item">
+                  <small>Today's Revenue</small>
+                  <h3 id="todayRevenue">₹0</h3>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 4: Average Daily Revenue -->
+            <div class="card avg-daily-card">
+              <div class="card-header">
+                <div>
+                  <p>Average Daily Revenue</p>
+                  <h2 id="avgDailyRevenue">₹0</h2>
+                </div>
+
+                <div class="icon average">
+                  <i class="fa-solid fa-calendar-days"></i>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <span>Average revenue per active day.</span>
+              </div>
+            </div>
+
+            <!-- CARD 5: Active Customers -->
+            <div class="card customer-card">
+              <div class="card-header">
+                <div>
+                  <p>Active Customers</p>
+                  <h2 id="customers">0</h2>
+                </div>
+
+                <div class="icon customer">
+                  <i class="fa-solid fa-users"></i>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <span>Registered Customers</span>
+              </div>
+            </div>
+          </section>
+
+          <div class="dashboard-grid">
+            <!-- MAIN REVENUE ANALYTICS GRAPH -->
+            <section class="revenue-section">
+              <div class="chart-box">
+                <div class="chart-top">
+                  <div>
+                    <h2>Revenue Analytics</h2>
+                    <p>Real-time daily revenue insights</p>
+                  </div>
+
+                  <!-- DIRECT CLICK QUICK TIME FILTERS -->
+                  <div class="chart-time-filters" role="group" aria-label="Chart date filters">
+                    <button class="filter-btn active" type="button" data-filter="all">All Time</button>
+                    <button class="filter-btn" type="button" data-filter="7days">7 Days</button>
+                    <button class="filter-btn" type="button" data-filter="1month">1 Month</button>
+                    <button class="filter-btn" type="button" data-filter="1year">1 Year</button>
+                  </div>
+                </div>
+
+                <div class="analytics-summary">
+                  <div>
+                    <small>Total Revenue</small>
+                    <h3 id="chartRevenue">₹0</h3>
+                  </div>
+
+                  <div>
+                    <span class="growth-badge">
+                      <i class="fa-solid fa-arrow-trend-up"></i>
+                      Live Supabase Data
+                    </span>
+                  </div>
+                </div>
+
+                <div class="chart-container main-chart-container">
+                  <canvas id="revenueChart"></canvas>
+                </div>
+              </div>
+            </section>
+
+            <!-- Daily Leaderboard Section -->
+            <section class="leaderboard-section">
+              <div class="card leaderboard-card">
+                <div class="card-top">
+                  <div>
+                    <h2>🏆 Daily Leaderboard</h2>
+                    <p>Live sales agent & user performance</p>
+                  </div>
+                  <span class="badge-leaderboard"><i class="fa-solid fa-trophy"></i> Top Performers</span>
+                </div>
+
+                <div class="table-responsive leaderboard-scroll">
+                  <table class="leaderboard-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Sales User</th>
+                        <th>Orders</th>
+                        <th>Revenue</th>
+                        <th>ARPU</th>
+                        <th>Target Progress</th>
+                      </tr>
+                    </thead>
+                    <tbody id="leaderboardData">
+                      <!-- Populated dynamically from Supabase -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <!-- Top Destinations Section -->
+            <section class="destinations-section">
+              <div class="card destinations-card">
+                <div class="destinations-top">
+                  <div>
+                    <h2>Top Destinations</h2>
+                    <p id="destinationsSubhead">All countries by revenue sales</p>
+                  </div>
+                  <span class="badge-dest" id="destCountBadge"><i class="fa-solid fa-earth-americas"></i> All Markets</span>
+                </div>
+
+                <div class="top-destinations-list destinations-scroll" id="topDestinationsList">
+                  <!-- Dynamically populated from Supabase for ALL countries -->
+                </div>
+              </div>
+            </section>
+
+            <!-- AI Assistant Section -->
+            <section class="ai-section">
+              <div class="card ai-card">
+                <div class="ai-top">
+                  <div>
+                    <h2>🤖 AI Assistant</h2>
+                    <p>Live Business Intelligence Insights</p>
+                  </div>
+
+                  <div class="live-status">
+                    <span class="live-circle"></span>
+                    LIVE
+                  </div>
+                </div>
+
+                <div id="aiInsights" class="ai-insights-grid"></div>
+              </div>
+            </section>
+
+            <!-- Recent Orders Table Section -->
+            <section class="orders-section">
+              <div class="table-box">
+                <div class="table-header">
+                  <div>
+                    <h2>Recent Orders</h2>
+                    <p>Latest live transactions</p>
+                  </div>
+
+                  <button id="viewAllBtn" class="view-btn" type="button">View All</button>
+                </div>
+
+                <div class="table-responsive orders-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Order No</th>
+                        <th>Customer</th>
+                        <th>Product & Destination</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableData"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- ANALYTICS PAGE -->
+        <div id="analyticsPage" style="display:none;">
+          <div class="analytics-header">
+            <div>
+              <h1>📊 Business Intelligence Analytics</h1>
+              <p style="color:var(--text-secondary); font-size:0.9rem; margin-top:4px;">In-depth performance insights & plan share breakdown</p>
+            </div>
+          </div>
+
+          <!-- ANALYTICS KPI CARDS -->
+          <div class="analytics-cards">
+            <div class="card analytics-kpi-card">
+              <div class="card-header">
+                <p>Gross Revenue</p>
+                <div class="icon revenue"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+              </div>
+              <h1 id="analyticsRevenue" class="analytics-kpi-val">₹0</h1>
+              <span class="positive" style="margin-top:8px; display:inline-flex; width:fit-content;"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% Sales Growth</span>
+            </div>
+
+            <div class="card analytics-kpi-card">
+              <div class="card-header">
+                <p>Total Orders</p>
+                <div class="icon orders"><i class="fa-solid fa-cart-shopping"></i></div>
+              </div>
+              <h1 id="analyticsOrders" class="analytics-kpi-val">0</h1>
+              <span class="subtext" style="margin-top:8px; display:block;">1,000 Live Supabase Orders</span>
+            </div>
+
+            <div class="card analytics-kpi-card">
+              <div class="card-header">
+                <p>Registered Users</p>
+                <div class="icon customer"><i class="fa-solid fa-users"></i></div>
+              </div>
+              <h1 id="analyticsCustomers" class="analytics-kpi-val">0</h1>
+              <span class="subtext" style="margin-top:8px; display:block;">1,000 Registered Database Users</span>
+            </div>
+
+            <div class="card analytics-kpi-card">
+              <div class="card-header">
+                <p>Active Customer Ratio</p>
+                <div class="icon average"><i class="fa-solid fa-chart-pie"></i></div>
+              </div>
+              <h1 id="analyticsRatio" class="analytics-kpi-val">94.5%</h1>
+              <span class="positive" style="margin-top:8px; display:inline-flex; width:fit-content;"><i class="fa-solid fa-user-check"></i> 945 Active Buyers</span>
+            </div>
+          </div>
+
+          <!-- ANALYTICS CHARTS SECTION -->
+          <div class="dashboard-grid" style="gap:24px;">
+            <section style="grid-column: span 6;">
+              <div class="chart-box analytics-chart-box">
+                <div class="chart-top">
+                  <div>
+                    <h2>Monthly Sales Revenue</h2>
+                    <p>Sales distribution grouped by month</p>
+                  </div>
+                </div>
+                <div class="chart-container" style="height: 280px;">
+                  <canvas id="analyticsRevenueChart"></canvas>
+                </div>
+              </div>
+            </section>
+
+            <section style="grid-column: span 6;">
+              <div class="chart-box analytics-chart-box">
+                <div class="chart-top">
+                  <div>
+                    <h2>SIM Plan Share Breakdown</h2>
+                    <p>eSIM Digital vs Physical Plastic SIM share</p>
+                  </div>
+                </div>
+                <div class="chart-container" style="height: 280px;">
+                  <canvas id="simModeChart"></canvas>
+                </div>
+              </div>
+            </section>
+
+            <section style="grid-column: span 6;">
+              <div class="chart-box analytics-chart-box">
+                <div class="chart-top">
+                  <div>
+                    <h2>Top Spending VIP Customers</h2>
+                    <p>Highest purchase volume buyers</p>
+                  </div>
+                </div>
+                <div class="chart-container" style="height: 280px;">
+                  <canvas id="customerChart"></canvas>
+                </div>
+              </div>
+            </section>
+
+            <section style="grid-column: span 6;">
+              <div class="chart-box analytics-chart-box">
+                <div class="chart-top">
+                  <div>
+                    <h2>Top Regional Revenue Markets</h2>
+                    <p>Top revenue-generating destinations</p>
+                  </div>
+                </div>
+                <div class="chart-container" style="height: 280px;">
+                  <canvas id="analyticsDestChart"></canvas>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

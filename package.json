@@ -1,0 +1,12 @@
+{
+  "name": "novasales-dashboard",
+  "version": "1.0.0",
+  "description": "NovaSales Business Intelligence Dashboard",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8080"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
