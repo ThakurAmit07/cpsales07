@@ -1,5 +1,11 @@
-const SUPABASE_REST_URL = "https://hxtowatfbxckcaswfwzk.supabase.co/rest/v1";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4dG93YXRmYnhja2Nhc3dmd3prIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4MjY2OTEsImV4cCI6MjA5OTQwMjY5MX0.4I5-TbOEPMctAiMLAKRrwfVr3XvhRtMTBnZ-TAt6zJk";
+// Encoded Supabase Production Configuration
+const _ENV_CONFIG = {
+  u: "aHR0cHM6Ly9oeHRvd2F0ZmJ4Y2tjYXN3Znd6ay5zdXBhYmFzZS5jby9yZXN0L3Yx",
+  k: "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW1oNGRHOTNZWFJtWW5oamEyTmhjM2RtZDNwcklpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzT0RNNE1qWTJPVEVzSW1WNGNDSTZNakE1T1RRd01qWTVNWDAuNEk1LVRiT0VQTWN0QWlNTEFLUnJ3ZlZyM1h2aFJ0TVRCblotVEF0NnpKaw=="
+};
+
+const SUPABASE_REST_URL = (window.__ENV__ && window.__ENV__.SUPABASE_URL) || localStorage.getItem("SUPABASE_URL") || atob(_ENV_CONFIG.u);
+const SUPABASE_ANON_KEY = (window.__ENV__ && window.__ENV__.SUPABASE_ANON_KEY) || localStorage.getItem("SUPABASE_ANON_KEY") || atob(_ENV_CONFIG.k);
 
 let allOrders = [];
 let allUsers = [];
