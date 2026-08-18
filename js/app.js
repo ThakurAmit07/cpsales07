@@ -17,20 +17,37 @@ let prodMap = new Map();
 let destMap = new Map();
 
 async function fetchFromSupabase(table) {
-  const response = await fetch(`${SUPABASE_REST_URL}/${table}?select=*`, {
-    method: "GET",
-    mode: "cors",
-    headers: {
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json"
-    }
-  });
+  const pageSize = 1000;
+  let offset = 0;
+  let allRows = [];
+  let hasMore = true;
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${table}: ${response.status} ${response.statusText}`);
+  while (hasMore) {
+    const response = await fetch(`${SUPABASE_REST_URL}/${table}?select=*&offset=${offset}&limit=${pageSize}`, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${table}: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    allRows = allRows.concat(data);
+
+    if (data.length < pageSize) {
+      hasMore = false;
+    } else {
+      offset += pageSize;
+    }
   }
-  return await response.json();
+
+  return allRows;
 }
 
 async function fetchSupabaseData() {
@@ -60,8 +77,8 @@ async function fetchSupabaseData() {
     destMap.clear();
     allDestinations.forEach((d) => destMap.set(String(d.destination_id), d));
 
-    updateDashboard(allOrders);
-    initDefaultDateInput();
+    initDefaultDateInput(true);
+    applyDateFilter(false);
     updateLastUpdated();
   } catch (error) {
     console.error("Supabase Sync Error:", error);
@@ -447,17 +464,13 @@ document.querySelectorAll(".filter-btn").forEach((button) => {
   });
 });
 
-function applyDateFilter() {
+function applyDateFilter(showToast = true) {
   const reportDateInput = document.getElementById("reportDate");
   let selectedDate = reportDateInput ? reportDateInput.value : "";
 
   // If input is empty, fallback to actual current local date
   if (!selectedDate) {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonthNum = String(now.getMonth() + 1).padStart(2, "0");
-    const currentDayNum = String(now.getDate()).padStart(2, "0");
-    selectedDate = `${currentYear}-${currentMonthNum}-${currentDayNum}`;
+    selectedDate = getCurrentTodayDateStr();
     if (reportDateInput) reportDateInput.value = selectedDate;
   }
 
@@ -467,21 +480,24 @@ function applyDateFilter() {
 
   document.querySelectorAll(".filter-btn").forEach((btn) => btn.classList.remove("active"));
   updateDashboard(filtered, selectedDate);
-  toast(`📅 Filter applied till ${selectedDate} (${filtered.length} total orders, ${dayOrders.length} on date)`);
+  if (showToast) {
+    toast(`📅 Filter applied till ${selectedDate} (${filtered.length} total orders, ${dayOrders.length} on date)`);
+  }
 }
 
 const applyDateBtn = document.getElementById("applyDate");
 if (applyDateBtn) {
-  applyDateBtn.addEventListener("click", applyDateFilter);
+  applyDateBtn.addEventListener("click", function () {
+    applyDateFilter(true);
+  });
 }
 
 const reportDateInput = document.getElementById("reportDate");
 if (reportDateInput) {
-  reportDateInput.addEventListener("change", applyDateFilter);
   reportDateInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") {
       e.preventDefault();
-      applyDateFilter();
+      applyDateFilter(true);
     }
   });
 }
@@ -647,12 +663,17 @@ function updateDigitalWatch() {
   if (todayDate) todayDate.innerText = dateStr;
 }
 
-function initDefaultDateInput() {
+function getCurrentTodayDateStr() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+function initDefaultDateInput(force = false) {
   const reportDateInput = document.getElementById("reportDate");
-  if (reportDateInput && !reportDateInput.value) {
-    const now = new Date();
-    const realTodayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-    reportDateInput.value = realTodayStr;
+  if (reportDateInput) {
+    if (force || !reportDateInput.value) {
+      reportDateInput.value = getCurrentTodayDateStr();
+    }
   }
 }
 
